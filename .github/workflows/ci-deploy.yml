@@ -1,0 +1,136 @@
+﻿name: CI / Deploy
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  # JOB 1 â€” IntegraÃ§Ã£o contÃ­nua (typecheck + build)
+  # Executado em todo push e pull request
+  # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  ci:
+    name: Typecheck & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do repositÃ³rio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Instalar dependÃªncias
+        run: npm ci
+
+      - name: Verificar tipos TypeScript
+        run: npm run typecheck
+
+      - name: Build de produÃ§Ã£o
+        run: npm run build
+        env:
+          NEXT_PUBLIC_APP_ENV: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+          NEXT_PUBLIC_APP_VERSION: ${{ github.sha }}
+          NEXT_PUBLIC_FIREBASE_API_KEY:            ${{ secrets.FIREBASE_DEV_API_KEY }}
+          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN:        ${{ secrets.FIREBASE_DEV_AUTH_DOMAIN }}
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID:         ${{ secrets.FIREBASE_DEV_PROJECT_ID }}
+          NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET:     ${{ secrets.FIREBASE_DEV_STORAGE_BUCKET }}
+          NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_DEV_MESSAGING_SENDER_ID }}
+          NEXT_PUBLIC_FIREBASE_APP_ID:             ${{ secrets.FIREBASE_DEV_APP_ID }}
+
+  # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  # JOB 2 â€” Deploy para DEV/HML (branch dev)
+  # Frontend â†’ Firebase Hosting DEV
+  # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  deploy-hml:
+    name: Deploy HML (Firebase DEV)
+    needs: ci
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
+    environment:
+      name: homologacao
+      url: https://smart-consulta-dev.web.app
+
+    steps:
+      - name: Checkout do repositÃ³rio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Instalar dependÃªncias
+        run: npm ci
+
+      - name: Build (HML â€” Firebase DEV)
+        run: npm run build
+        env:
+          NEXT_PUBLIC_APP_ENV: preview
+          NEXT_PUBLIC_APP_VERSION: ${{ github.sha }}
+          NEXT_PUBLIC_FIREBASE_API_KEY:            ${{ secrets.FIREBASE_DEV_API_KEY }}
+          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN:        ${{ secrets.FIREBASE_DEV_AUTH_DOMAIN }}
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID:         ${{ secrets.FIREBASE_DEV_PROJECT_ID }}
+          NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET:     ${{ secrets.FIREBASE_DEV_STORAGE_BUCKET }}
+          NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_DEV_MESSAGING_SENDER_ID }}
+          NEXT_PUBLIC_FIREBASE_APP_ID:             ${{ secrets.FIREBASE_DEV_APP_ID }}
+
+      - name: Deploy no Firebase Hosting DEV
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_DEV }}
+          projectId: smart-consulta-dev
+          channelId: live
+
+  # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  # JOB 3 â€” Deploy para PRD (branch main)
+  # Frontend â†’ Firebase Hosting PRD
+  # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  deploy-prd:
+    name: Deploy PRD (Firebase PRD)
+    needs: ci
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment:
+      name: producao
+      url: https://smart-consulta.web.app
+
+    steps:
+      - name: Checkout do repositÃ³rio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Instalar dependÃªncias
+        run: npm ci
+
+      - name: Build (PRD â€” Firebase PRD)
+        run: npm run build
+        env:
+          NEXT_PUBLIC_APP_ENV: production
+          NEXT_PUBLIC_APP_VERSION: ${{ github.sha }}
+          NEXT_PUBLIC_FIREBASE_API_KEY:            ${{ secrets.FIREBASE_PRD_API_KEY }}
+          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN:        ${{ secrets.FIREBASE_PRD_AUTH_DOMAIN }}
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID:         ${{ secrets.FIREBASE_PRD_PROJECT_ID }}
+          NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET:     ${{ secrets.FIREBASE_PRD_STORAGE_BUCKET }}
+          NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_PRD_MESSAGING_SENDER_ID }}
+          NEXT_PUBLIC_FIREBASE_APP_ID:             ${{ secrets.FIREBASE_PRD_APP_ID }}
+
+      - name: Deploy no Firebase Hosting PRD
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PRD }}
+          projectId: smart-consulta
+          channelId: live

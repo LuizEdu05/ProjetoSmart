@@ -1,0 +1,242 @@
+@import "tailwindcss";
+@source "../../../apps/**/*.{ts,tsx}";
+@source "../../../components/**/*.{ts,tsx}";
+@source "../**/*.{ts,tsx}";
+
+@theme {
+  /* Brand palette */
+  --color-brand: #1D9E75;
+  --color-brand-dark: #0F6E56;
+  --color-brand-light: #E1F5EE;
+  --color-brand-amber: #EF9F27;
+  --color-brand-red: #E24B4A;
+  --color-brand-blue: #378ADD;
+  --color-ink: #0e1a14;
+  --color-ink2: #2a3d33;
+  --color-muted-text: #6b7c72;
+  --color-faint: #f2f5f3;
+  --color-faint2: #e8ede9;
+  --color-border-brand: #d9e3dd;
+
+  /* shadcn/ui semantic tokens (light) */
+  --color-background: #ffffff;
+  --color-foreground: #0e1a14;
+  --color-card: #ffffff;
+  --color-card-foreground: #0e1a14;
+  --color-primary: #1D9E75;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #E1F5EE;
+  --color-secondary-foreground: #0F6E56;
+  --color-muted: #f2f5f3;
+  --color-muted-foreground: #6b7c72;
+  --color-accent: #E1F5EE;
+  --color-accent-foreground: #0F6E56;
+  --color-destructive: #E24B4A;
+  --color-destructive-foreground: #ffffff;
+  --color-border: #d9e3dd;
+  --color-input: #d9e3dd;
+  --color-ring: #1D9E75;
+
+  /* Radius */
+  --radius: 0.625rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* Fonts */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Custom serif for headings (Fraunces-style feel with system serif) */
+  --font-serif: "Fraunces", Georgia, ui-serif, serif;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  /* Focus ring consistent with brand */
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* Brand color utilities */
+  .bg-brand { background-color: #1D9E75; }
+  .bg-brand-dark { background-color: #0F6E56; }
+  .bg-brand-light { background-color: #E1F5EE; }
+  .text-brand { color: #1D9E75; }
+  .text-brand-dark { color: #0F6E56; }
+  .border-brand { border-color: #1D9E75; }
+
+  /* Glassmorphism */
+  .glass {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  /* Shadow scale */
+  .shadow-brand {
+    box-shadow: 0 4px 24px rgba(14, 26, 20, 0.08);
+  }
+  .shadow-brand-lg {
+    box-shadow: 0 16px 48px rgba(14, 26, 20, 0.12);
+  }
+
+  /* Pulse animation */
+  .animate-pulse-dot {
+    animation: pulse-dot 1.8s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.5); }
+  }
+
+  /* Pulse ring — expands outward like a heartbeat */
+  .animate-pulse-ring {
+    animation: pulse-ring 2s ease-out infinite;
+  }
+
+  @keyframes pulse-ring {
+    0%   { transform: scale(1);   opacity: 0.5; }
+    100% { transform: scale(1.8); opacity: 0; }
+  }
+
+  /* Floating — gentle vertical bob */
+  .animate-float {
+    animation: float 4s ease-in-out infinite;
+  }
+  .animate-float-slow {
+    animation: float 6s ease-in-out infinite;
+  }
+  .animate-float-delay {
+    animation: float 4s ease-in-out 1.5s infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-8px); }
+  }
+
+  /* Orb blob — slow breathing scale */
+  .animate-orb {
+    animation: orb 9s ease-in-out infinite;
+  }
+  .animate-orb-alt {
+    animation: orb-alt 12s ease-in-out infinite;
+  }
+
+  @keyframes orb {
+    0%, 100% { transform: scale(1) translate(0px, 0px); }
+    33%       { transform: scale(1.12) translate(18px, -12px); }
+    66%       { transform: scale(0.95) translate(-10px, 10px); }
+  }
+  @keyframes orb-alt {
+    0%, 100% { transform: scale(1) translate(0px, 0px); }
+    33%       { transform: scale(1.08) translate(-15px, 14px); }
+    66%       { transform: scale(1.15) translate(12px, -8px); }
+  }
+
+  /* Fade-up animation */
+  .animate-fade-up {
+    animation: fade-up 0.5s ease forwards;
+  }
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Shimmer — loading/highlight sweep */
+  .animate-shimmer {
+    animation: shimmer 2.5s linear infinite;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+    background-size: 200% 100%;
+  }
+  @keyframes shimmer {
+    from { background-position: -200% 0; }
+    to   { background-position:  200% 0; }
+  }
+
+  /* ── Aurora background animations ─────────────────────────── */
+  .animate-aurora-1 {
+    animation: aurora-drift-1 18s ease-in-out infinite;
+  }
+  .animate-aurora-2 {
+    animation: aurora-drift-2 24s ease-in-out infinite;
+  }
+  .animate-aurora-3 {
+    animation: aurora-drift-3 31s ease-in-out infinite;
+  }
+
+  @keyframes aurora-drift-1 {
+    0%, 100% { transform: translate(0%, 0%) scale(1);     }
+    18%       { transform: translate(4%, 3%) scale(1.06);  }
+    42%       { transform: translate(-3%, 5%) scale(0.95); }
+    67%       { transform: translate(3%, -2%) scale(1.04); }
+    84%       { transform: translate(-1%, 3%) scale(0.98); }
+  }
+  @keyframes aurora-drift-2 {
+    0%, 100% { transform: translate(0%, 0%) scale(1);      }
+    28%       { transform: translate(-4%, 3%) scale(1.08);  }
+    58%       { transform: translate(5%, -3%) scale(0.93);  }
+    82%       { transform: translate(-2%, -2%) scale(1.04); }
+  }
+  @keyframes aurora-drift-3 {
+    0%, 100% { transform: translate(0%, 0%) scale(1);     }
+    33%       { transform: translate(3%, -4%) scale(1.05); }
+    66%       { transform: translate(-4%, 5%) scale(0.97); }
+    88%       { transform: translate(2%, -1%) scale(1.02); }
+  }
+
+  /* ── Grain noise texture ───────────────────────────────────── */
+  .noise-grain {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 220px 220px;
+    opacity: 0.028;
+    mix-blend-mode: multiply;
+  }
+}

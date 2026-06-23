@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "dev": "smart-consulta-dev",
+    "prod": "smart-consulta"
+  }
+}
