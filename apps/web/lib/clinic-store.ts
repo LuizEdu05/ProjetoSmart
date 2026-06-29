@@ -110,8 +110,15 @@ export function saveProfessionals(clinicId: string, list: Professional[]) {
 
 export function addProfessional(p: Omit<Professional, "id">): Professional {
   const all: Professional[] = JSON.parse(localStorage.getItem(PROFESSIONALS_KEY) || "[]")
-  const newP = { ...p, id: "dr" + Date.now() }
+  const newP = { ...p, id: "dr_" + crypto.randomUUID() }
   localStorage.setItem(PROFESSIONALS_KEY, JSON.stringify([...all, newP]))
+  // Ensure new professional gets a default password entry so loginDoctor doesn't rely on hardcoded fallback
+  const PWD_KEY = "sc_doctor_passwords"
+  const pwds: Record<string, string> = JSON.parse(localStorage.getItem(PWD_KEY) || "{}")
+  if (!pwds[newP.id]) {
+    pwds[newP.id] = "medico123"
+    localStorage.setItem(PWD_KEY, JSON.stringify(pwds))
+  }
   return newP
 }
 

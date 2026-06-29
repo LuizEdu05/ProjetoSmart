@@ -31,7 +31,7 @@ export function PolicySection() {
       </p>
       <h2
         id="policy-heading"
-        className="text-[clamp(26px,4vw,42px)] font-bold text-[#0e1a14] mb-9"
+        className="text-[clamp(26px,4vw,42px)] font-bold text-[#0e1a14] dark:text-white mb-9"
       >
         Regras claras para todos
       </h2>
@@ -75,25 +75,25 @@ export function PolicySection() {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.45, delay: 0.1 }}
-          className="border border-[#d9e3dd] rounded-[20px] p-7"
+          className="border border-[#d9e3dd] dark:border-[rgba(29,158,117,0.15)] dark:bg-[#0a1209] rounded-[20px] p-7"
           aria-labelledby="fees-heading"
         >
           <h3
             id="fees-heading"
-            className="text-[20px] font-bold text-[#0e1a14] mb-2"
+            className="text-[20px] font-bold text-[#0e1a14] dark:text-white mb-2"
           >
             Taxa de cancelamento
           </h3>
-          <p className="text-[13px] text-[#6b7c72] mb-5">
+          <p className="text-[13px] text-[#6b7c72] dark:text-white/60 mb-5">
             Para garantir aproveitamento dos horários:
           </p>
           <table className="w-full border-collapse text-[13px]">
             <thead>
               <tr>
-                <th className="text-left py-2 px-2.5 bg-[#f2f5f3] text-[#6b7c72] font-medium rounded-tl-lg">
+                <th className="text-left py-2 px-2.5 bg-[#f2f5f3] dark:bg-[rgba(29,158,117,0.08)] text-[#6b7c72] dark:text-white/60 font-medium rounded-tl-lg">
                   Antecedência
                 </th>
-                <th className="text-left py-2 px-2.5 bg-[#f2f5f3] text-[#6b7c72] font-medium rounded-tr-lg">
+                <th className="text-left py-2 px-2.5 bg-[#f2f5f3] dark:bg-[rgba(29,158,117,0.08)] text-[#6b7c72] dark:text-white/60 font-medium rounded-tr-lg">
                   Taxa
                 </th>
               </tr>
@@ -102,9 +102,9 @@ export function PolicySection() {
               {FEES.map((row) => (
                 <tr
                   key={row.when}
-                  className="border-b border-[#f2f5f3] last:border-0"
+                  className="border-b border-[#f2f5f3] dark:border-white/5 last:border-0"
                 >
-                  <td className="py-2.5 px-2.5 text-[#2a3d33]">{row.when}</td>
+                  <td className="py-2.5 px-2.5 text-[#2a3d33] dark:text-white/70">{row.when}</td>
                   <td className="py-2.5 px-2.5">
                     <span
                       className="font-medium px-2 py-0.5 rounded-md text-[12px]"

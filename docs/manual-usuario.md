@@ -8,7 +8,7 @@
 
 O Smart Consulta é uma plataforma web para agendamento de consultas médicas. Você encontra clínicas e médicos disponíveis, escolhe um horário livre e confirma sua consulta em poucos cliques — sem telefonemas, sem filas.
 
-**Acesso:** https://smart-consulta.vercel.app
+**Acesso:** https://smart-consulta-dev.web.app
 
 ---
 
@@ -97,7 +97,7 @@ Se esquecer a senha: entre em contato pelo [Central de Suporte](/support).
 
 ### 1.5 Central de Suporte
 
-Acesse **https://smart-consulta.vercel.app/support** para:
+Acesse **https://smart-consulta-dev.web.app/support** para:
 
 - Consultar as **perguntas frequentes (FAQ)**.
 - Verificar os canais de atendimento (chat, e-mail, telefone).
@@ -123,7 +123,7 @@ De qualquer página (perfil, suporte, portal da clínica), clique no **logo "SMA
 
 ### 2.1 Acessar o portal
 
-**URL:** https://smart-consulta.vercel.app/clinic/login
+**URL:** https://smart-consulta-dev.web.app/clinic/login
 
 **Credenciais de demonstração:**
 - E-mail: `clinica@smartconsulta.com`

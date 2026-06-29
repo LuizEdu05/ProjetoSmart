@@ -213,6 +213,7 @@ export function RegisterModal({
                 Ao criar conta, você concorda com os{" "}
                 <button
                   type="button"
+                  onClick={() => showToast("Termos de Uso disponíveis em breve.", "info")}
                   className="text-[#1D9E75] hover:underline cursor-pointer"
                 >
                   Termos de Uso
@@ -220,6 +221,7 @@ export function RegisterModal({
                 e{" "}
                 <button
                   type="button"
+                  onClick={() => showToast("Política de Privacidade disponível em breve.", "info")}
                   className="text-[#1D9E75] hover:underline cursor-pointer"
                 >
                   Política de Privacidade

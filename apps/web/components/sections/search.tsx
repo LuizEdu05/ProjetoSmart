@@ -3,6 +3,8 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { Search } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useTheme } from "next-themes"
 
 const CHIPS = [
   "Todos",
@@ -15,17 +17,21 @@ const CHIPS = [
   "Online",
 ]
 
-interface SearchSectionProps {
-  onSearch?: (query: string, filter: string) => void
-}
-
-export function SearchSection({ onSearch }: SearchSectionProps) {
+export function SearchSection() {
+  const router = useRouter()
+  const { resolvedTheme } = useTheme()
   const [query, setQuery] = useState("")
   const [active, setActive] = useState("Todos")
 
+  const isDark = resolvedTheme === "dark"
+
   function handleSearch() {
-    document.querySelector("#clinicas")?.scrollIntoView({ behavior: "smooth" })
-    onSearch?.(query, active)
+    router.push("/buscar")
+  }
+
+  function handleChip(chip: string) {
+    setActive(chip)
+    router.push("/buscar")
   }
 
   return (
@@ -33,8 +39,9 @@ export function SearchSection({ onSearch }: SearchSectionProps) {
       className="relative overflow-hidden py-16 px-5 md:px-10"
       id="busca"
       style={{
-        background:
-          "linear-gradient(180deg, rgba(29,158,117,0.05) 0%, rgba(242,245,243,0.92) 80px, rgba(242,245,243,0.92) 100%)",
+        background: isDark
+          ? "#0a1209"
+          : "linear-gradient(180deg, rgba(29,158,117,0.05) 0%, rgba(242,245,243,0.92) 80px, rgba(242,245,243,0.92) 100%)",
       }}
     >
       {/* Subtle top glow line */}
@@ -65,15 +72,15 @@ export function SearchSection({ onSearch }: SearchSectionProps) {
         <p className="text-[11px] font-bold text-[#1D9E75] tracking-[0.1em] uppercase mb-2">
           Busca inteligente
         </p>
-        <h2 className="text-[clamp(26px,4vw,42px)] font-bold text-[#0e1a14] mb-2">
+        <h2 className="text-[clamp(26px,4vw,42px)] font-bold text-[#0e1a14] dark:text-white mb-2">
           Encontre o médico ideal
         </h2>
-        <p className="text-[15px] text-[#6b7c72] mb-8">
+        <p className="text-[15px] text-[#6b7c72] dark:text-white/60 mb-8">
           Pesquise por especialidade, nome do médico ou clínica.
         </p>
 
         {/* Search bar */}
-        <div className="bg-white border-[1.5px] border-[#d9e3dd] rounded-2xl flex items-center px-4 py-1.5 gap-2 shadow-[0_4px_24px_rgba(14,26,20,0.08)] focus-within:border-[#1D9E75] transition-colors duration-200">
+        <div className="bg-white dark:bg-[#0a1209] border-[1.5px] border-[#d9e3dd] dark:border-[rgba(29,158,117,0.2)] rounded-2xl flex items-center px-4 py-1.5 gap-2 shadow-[0_4px_24px_rgba(14,26,20,0.08)] dark:shadow-none focus-within:border-[#1D9E75] transition-colors duration-200">
           <Search
             size={17}
             className="text-[#6b7c72] flex-shrink-0"
@@ -89,11 +96,11 @@ export function SearchSection({ onSearch }: SearchSectionProps) {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             placeholder="Cardiologista, Dr. Silva, Clínica..."
-            className="flex-1 border-none outline-none text-[15px] text-[#0e1a14] placeholder:text-[#aab5af] bg-transparent py-2.5 min-w-0"
+            className="flex-1 border-none outline-none text-[15px] text-[#0e1a14] dark:text-white placeholder:text-[#aab5af] dark:placeholder:text-white/30 bg-transparent py-2.5 min-w-0"
             aria-label="Buscar clínica, médico ou especialidade"
           />
           <button
-            onClick={handleSearch}
+            onClick={() => handleSearch()}
             className="bg-[#1D9E75] hover:bg-[#0F6E56] text-white rounded-xl px-5 py-2.5 text-[14px] font-medium transition-colors duration-200 cursor-pointer flex-shrink-0"
             aria-label="Buscar"
           >
@@ -110,12 +117,12 @@ export function SearchSection({ onSearch }: SearchSectionProps) {
           {CHIPS.map((chip) => (
             <button
               key={chip}
-              onClick={() => setActive(chip)}
+              onClick={() => handleChip(chip)}
               aria-pressed={active === chip}
               className={`px-4 py-1.5 rounded-full text-[13px] font-medium transition-all duration-150 cursor-pointer border ${
                 active === chip
                   ? "bg-[#1D9E75] border-[#1D9E75] text-white"
-                  : "bg-white border-[#d9e3dd] text-[#6b7c72] hover:bg-[#1D9E75] hover:border-[#1D9E75] hover:text-white"
+                  : "bg-white dark:bg-[#0a1209] border-[#d9e3dd] dark:border-[rgba(29,158,117,0.2)] text-[#6b7c72] dark:text-white/60 hover:bg-[#1D9E75] hover:border-[#1D9E75] hover:text-white"
               }`}
             >
               {chip}

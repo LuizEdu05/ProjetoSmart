@@ -17,9 +17,11 @@ import {
   registerLocal,
   addAppointment,
   cancelAppointment,
+  rescheduleAppointment,
   LOCAL_TOKEN,
 } from "@/lib/auth-store"
 import { apiFetch } from "@/lib/api"
+import { updateAppointmentStatus, rescheduleGlobalAppointment } from "@/lib/global-appointments"
 
 interface AuthContextValue {
   user: User | null
@@ -34,8 +36,9 @@ interface AuthContextValue {
   ) => Promise<void>
   logout: () => void
   updateUser: (updates: Partial<User>) => void
-  bookAppointment: (appt: Omit<Appointment, "id" | "createdAt">) => void
+  bookAppointment: (appt: Omit<Appointment, "createdAt">) => void
   cancelAppt: (apptId: string) => void
+  rescheduleAppt: (apptId: string, date: string, dateISO: string, time: string) => void
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -112,12 +115,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const bookAppointment = useCallback(
-    (appt: Omit<Appointment, "id" | "createdAt">) => {
+    (appt: Omit<Appointment, "createdAt">) => {
       setUser((prev) => {
         if (!prev) return prev
         const full: Appointment = {
           ...appt,
-          id: "a" + Date.now(),
           createdAt: new Date().toISOString(),
         }
         return addAppointment(prev, full)
@@ -127,15 +129,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   )
 
   const cancelAppt = useCallback((apptId: string) => {
+    updateAppointmentStatus(apptId, "cancelled")
     setUser((prev) => {
       if (!prev) return prev
       return cancelAppointment(prev, apptId)
     })
   }, [])
 
+  const rescheduleAppt = useCallback((apptId: string, date: string, dateISO: string, time: string) => {
+    rescheduleGlobalAppointment(apptId, date, dateISO, time)
+    setUser((prev) => {
+      if (!prev) return prev
+      return rescheduleAppointment(prev, apptId, date, time)
+    })
+  }, [])
+
   return (
     <AuthContext.Provider
-      value={{ user, isLoading, login, register, logout, updateUser, bookAppointment, cancelAppt }}
+      value={{ user, isLoading, login, register, logout, updateUser, bookAppointment, cancelAppt, rescheduleAppt }}
     >
       {children}
     </AuthContext.Provider>

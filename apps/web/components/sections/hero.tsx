@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import { motion } from "framer-motion"
 import { ArrowRight, Activity, Stethoscope, Shield, Clock } from "lucide-react"
-import { useBooking } from "@/context/booking-context"
+import { useRouter } from "next/navigation"
 import { EcgMonitor } from "@/components/ui/ecg-monitor"
 
 // ── Animated count-up hook ───────────────────────────────────
@@ -48,10 +48,10 @@ function StatItem({ target, suffix, label }: { target: number; suffix: string; l
   const { value, ref } = useCountUp(target)
   return (
     <div ref={ref}>
-      <div className="text-[26px] font-black text-[#0e1a14] leading-none tabular-nums">
+      <div className="text-[26px] font-black text-[#0e1a14] dark:text-white leading-none tabular-nums">
         {value.toLocaleString("pt-BR")}{suffix}
       </div>
-      <div className="text-[12px] text-[#6b7c72] mt-0.5">{label}</div>
+      <div className="text-[12px] text-[#6b7c72] dark:text-white/50 mt-0.5">{label}</div>
     </div>
   )
 }
@@ -76,7 +76,7 @@ function fadeUp(delay = 0) {
 }
 
 export function HeroSection() {
-  const { openBooking } = useBooking()
+  const router = useRouter()
 
   return (
     <section
@@ -130,7 +130,7 @@ export function HeroSection() {
         <motion.h1
           {...fadeUp(0.1)}
           id="hero-heading"
-          className="text-[clamp(38px,5vw,66px)] font-black leading-[1.05] mb-5 text-[#0e1a14] tracking-tight"
+          className="text-[clamp(38px,5vw,66px)] font-black leading-[1.05] mb-5 text-[#0e1a14] dark:text-white tracking-tight"
         >
           Sua saúde,{" "}
           <span className="relative inline-block">
@@ -150,7 +150,7 @@ export function HeroSection() {
 
         <motion.p
           {...fadeUp(0.15)}
-          className="text-[17px] text-[#6b7c72] leading-[1.75] mb-8 max-w-[480px]"
+          className="text-[17px] text-[#6b7c72] dark:text-white/60 leading-[1.75] mb-8 max-w-[480px]"
         >
           Encontre clínicas e médicos de qualidade, agende sua consulta em
           minutos e receba lembretes automáticos. Simples, rápido e confiável.
@@ -159,7 +159,7 @@ export function HeroSection() {
         {/* CTA buttons */}
         <motion.div {...fadeUp(0.2)} className="flex gap-3 flex-wrap mb-7">
           <button
-            onClick={() => openBooking()}
+            onClick={() => router.push("/buscar")}
             className="relative inline-flex items-center gap-2 bg-[#1D9E75] hover:bg-[#0F6E56] text-white px-7 py-4 rounded-xl text-[15px] font-semibold transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(29,158,117,0.4)] cursor-pointer overflow-hidden group"
           >
             <span className="absolute inset-0 bg-white/10 translate-x-[-110%] group-hover:translate-x-[110%] transition-transform duration-500 skew-x-12" />
@@ -169,7 +169,7 @@ export function HeroSection() {
           <a
             href="#clinicas"
             onClick={e => { e.preventDefault(); document.querySelector("#clinicas")?.scrollIntoView({ behavior: "smooth" }) }}
-            className="inline-flex items-center gap-2 border-[1.5px] border-[#d9e3dd] text-[#0e1a14] hover:border-[#1D9E75] hover:text-[#1D9E75] px-6 py-4 rounded-xl text-[15px] font-semibold transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
+            className="inline-flex items-center gap-2 border-[1.5px] border-[#d9e3dd] dark:border-white/20 text-[#0e1a14] dark:text-white hover:border-[#1D9E75] hover:text-[#1D9E75] px-6 py-4 rounded-xl text-[15px] font-semibold transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
           >
             Ver clínicas
           </a>
@@ -180,7 +180,7 @@ export function HeroSection() {
           {TRUST.map(({ Icon, text }) => (
             <div
               key={text}
-              className="flex items-center gap-1.5 text-[12px] text-[#6b7c72] bg-[#f8faf9] border border-[#e8ede9] rounded-full px-3 py-1.5"
+              className="flex items-center gap-1.5 text-[12px] text-[#6b7c72] dark:text-white/60 bg-[#f8faf9] dark:bg-[rgba(29,158,117,0.06)] border border-[#e8ede9] dark:border-[rgba(29,158,117,0.15)] rounded-full px-3 py-1.5"
             >
               <Icon size={12} className="text-[#1D9E75]" aria-hidden="true" />
               {text}
@@ -191,7 +191,7 @@ export function HeroSection() {
         {/* Animated stats */}
         <motion.div
           {...fadeUp(0.3)}
-          className="flex gap-7 pt-7 border-t border-[#d9e3dd]"
+          className="flex gap-7 pt-7 border-t border-[#d9e3dd] dark:border-white/10"
         >
           {STATS.map(s => (
             <StatItem key={s.label} {...s} />
@@ -207,14 +207,14 @@ export function HeroSection() {
           initial={{ opacity: 0, x: -20, y: 10 }}
           animate={{ opacity: 1, x: 0, y: 0 }}
           transition={{ delay: 0.6, duration: 0.5 }}
-          className="animate-float absolute -top-6 -left-8 z-20 flex items-center gap-2.5 bg-white border border-[#d9e3dd] rounded-2xl px-3.5 py-2.5 shadow-[0_4px_20px_rgba(14,26,20,0.12)]"
+          className="animate-float absolute -top-6 -left-8 z-20 flex items-center gap-2.5 bg-white dark:bg-[#0a1209] border border-[#d9e3dd] dark:border-[rgba(29,158,117,0.2)] rounded-2xl px-3.5 py-2.5 shadow-[0_4px_20px_rgba(14,26,20,0.12)] dark:shadow-none"
         >
           <div className="w-7 h-7 rounded-full bg-[#E1F5EE] flex items-center justify-center flex-shrink-0">
             <Activity size={13} className="text-[#1D9E75]" />
           </div>
           <div>
-            <p className="text-[12px] font-semibold text-[#0e1a14]">Lembrete de consulta</p>
-            <p className="text-[11px] text-[#6b7c72]">Amanhã às 10:00 — Dr. Felipe</p>
+            <p className="text-[12px] font-semibold text-[#0e1a14] dark:text-white">Lembrete de consulta</p>
+            <p className="text-[11px] text-[#6b7c72] dark:text-white/50">Amanhã às 10:00 — Dr. Felipe</p>
           </div>
         </motion.div>
 

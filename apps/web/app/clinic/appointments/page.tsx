@@ -11,23 +11,20 @@ import {
   type GlobalAppointment,
   type ApptStatus,
 } from "@/lib/global-appointments"
+import { STATUS_STYLE } from "@/lib/status-config"
 
 const STATUSES: { id: ApptStatus | "all"; label: string }[] = [
-  { id: "all",       label: "Todos" },
-  { id: "scheduled", label: "Agendado" },
-  { id: "confirmed", label: "Confirmado" },
-  { id: "completed", label: "Realizado" },
-  { id: "cancelled", label: "Cancelado" },
-  { id: "no-show",   label: "Faltou" },
+  { id: "all",          label: "Todos" },
+  { id: "pending",      label: "Pendentes" },
+  { id: "scheduled",    label: "Agendado" },
+  { id: "confirmed",    label: "Confirmado" },
+  { id: "rescheduled",  label: "Reagendado" },
+  { id: "in-progress",  label: "Em atend." },
+  { id: "completed",    label: "Realizado" },
+  { id: "cancelled",    label: "Cancelado" },
+  { id: "no-show",      label: "Faltou" },
 ]
 
-const STATUS_STYLE: Record<ApptStatus, { label: string; color: string; bg: string }> = {
-  scheduled:  { label: "Agendado",   color: "#185FA5", bg: "#E6F1FB" },
-  confirmed:  { label: "Confirmado", color: "#0F6E56", bg: "#E1F5EE" },
-  completed:  { label: "Realizado",  color: "#6b7c72", bg: "#e8ede9" },
-  cancelled:  { label: "Cancelado",  color: "#791F1F", bg: "#FCEBEB" },
-  "no-show":  { label: "Faltou",     color: "#854F0B", bg: "#FEF3E2" },
-}
 
 function DetailModal({
   appt,
@@ -88,15 +85,15 @@ function DetailModal({
           </div>
 
           {/* Status actions */}
-          {appt.status !== "completed" && appt.status !== "cancelled" && (
-            <div className="flex gap-2 pt-1">
-              {appt.status === "scheduled" && (
+          {!["completed","cancelled","no-show"].includes(appt.status) && (
+            <div className="flex flex-wrap gap-2 pt-1">
+              {(appt.status === "pending" || appt.status === "scheduled") && (
                 <button onClick={() => { onStatusChange(appt.id, "confirmed"); onClose() }}
                   className="flex-1 flex items-center justify-center gap-1.5 bg-[#E1F5EE] hover:bg-[#1D9E75] text-[#0F6E56] hover:text-white rounded-xl py-2.5 text-[13px] font-medium transition-colors cursor-pointer">
-                  <CheckCircle size={15} /> Confirmar
+                  <CheckCircle size={15} /> {appt.status === "pending" ? "Aprovar" : "Confirmar"}
                 </button>
               )}
-              {(appt.status === "scheduled" || appt.status === "confirmed") && (
+              {["scheduled","confirmed","in-progress","rescheduled"].includes(appt.status) && (
                 <button onClick={() => { onStatusChange(appt.id, "completed"); onClose() }}
                   className="flex-1 flex items-center justify-center gap-1.5 bg-[#1D9E75] hover:bg-[#0F6E56] text-white rounded-xl py-2.5 text-[13px] font-medium transition-colors cursor-pointer">
                   <CheckCircle size={15} /> Marcar realizado

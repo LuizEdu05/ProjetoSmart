@@ -7,14 +7,7 @@ import Link from "next/link"
 import { useClinicAuth } from "@/context/clinic-auth-context"
 import { getAllAppointments, type GlobalAppointment, type ApptStatus } from "@/lib/global-appointments"
 import { getProfessionals } from "@/lib/clinic-store"
-
-const STATUS_MAP: Record<ApptStatus, { label: string; color: string; bg: string }> = {
-  scheduled:  { label: "Agendado",   color: "#185FA5", bg: "#E6F1FB" },
-  confirmed:  { label: "Confirmado", color: "#0F6E56", bg: "#E1F5EE" },
-  completed:  { label: "Realizado",  color: "#6b7c72", bg: "#e8ede9" },
-  cancelled:  { label: "Cancelado",  color: "#791F1F", bg: "#FCEBEB" },
-  "no-show":  { label: "Faltou",     color: "#854F0B", bg: "#FEF3E2" },
-}
+import { STATUS_STYLE } from "@/lib/status-config"
 
 function StatCard({ title, value, sub, Icon, color }: { title: string; value: number | string; sub?: string; Icon: React.ElementType; color: string }) {
   return (
@@ -97,7 +90,7 @@ export default function ClinicDashboard() {
           ) : (
             <div className="divide-y divide-[#f2f5f3]">
               {todayAppts.map(appt => {
-                const s = STATUS_MAP[appt.status]
+                const s = STATUS_STYLE[appt.status]
                 return (
                   <div key={appt.id} className="flex items-center gap-3 px-5 py-3.5 hover:bg-[#fafcfb] transition-colors">
                     <div className="text-[14px] font-bold text-[#0e1a14] w-14 flex-shrink-0">{appt.time}</div>
