@@ -13,6 +13,17 @@ import {
 } from "@/lib/global-appointments"
 
 // ── helpers ───────────────────────────────────────────────────────────────────
+
+/** Parse Brazilian currency string: "R$ 1.500,50" → 1500.50 */
+function parseBRLPrice(price: string): number {
+  const cleaned = price
+    .replace("R$", "")
+    .trim()
+    .replace(/\./g, "")   // remove thousand separators (dot in BR format)
+    .replace(",", ".")    // decimal comma → dot
+  return parseFloat(cleaned) || 150
+}
+
 function buildDays() {
   const days: { label: string; day: string; date: string; iso: string }[] = []
   const weekdays: string[] = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
@@ -56,11 +67,12 @@ export function BookingModal() {
   const [selectedDay, setSelectedDay]     = useState(days[0]!)
   const [selectedTime, setSelectedTime]   = useState("")
   const [selectedPayment, setSelectedPayment] = useState("Cartão")
+  const [isSubmitting, setIsSubmitting]   = useState(false)
 
   // Real-time booked slots for selected clinic + date
   const bookedSlots = useMemo(() => {
     if (!booking.isOpen) return []
-    return getBookedSlots(booking.clinicId || "c1", selectedDay.iso)
+    return getBookedSlots(booking.clinicId || "c1", selectedDay.iso, booking.doctorId || "dr1")
   }, [booking.isOpen, booking.clinicId, selectedDay.iso])
 
   function reset() {
@@ -68,6 +80,7 @@ export function BookingModal() {
     setSelectedDay(days[0]!)
     setSelectedTime("")
     setSelectedPayment("Cartão")
+    setIsSubmitting(false)
   }
 
   function handleClose() {
@@ -85,10 +98,14 @@ export function BookingModal() {
       showToast("Selecione um horário.", "error")
       return
     }
+    if (isSubmitting) return
+    setIsSubmitting(true)
 
-    // Save to global appointment store (real functionality)
+    // Single shared ID — both stores use this so cancellation stays in sync
+    const sharedId = crypto.randomUUID()
+
     const globalAppt: GlobalAppointment = {
-      id: "a" + Date.now(),
+      id: sharedId,
       patientId: user?.id || "guest",
       patientName: user ? `${user.firstName} ${user.lastName}` : "Convidado",
       patientEmail: user?.email || "",
@@ -105,13 +122,15 @@ export function BookingModal() {
       payment: selectedPayment,
       status: "scheduled",
       notes: "",
+      doctorNotes: "",
       createdAt: new Date().toISOString(),
     }
     addGlobalAppointment(globalAppt)
 
-    // Also save to patient profile
+    // Save to patient profile using the SAME id so cancelAppt can find it in global store
     if (user) {
       bookAppointment({
+        id: sharedId,
         clinic: booking.clinic,
         doctor: booking.doctor || "Médico disponível",
         specialty: booking.specialty,
@@ -130,9 +149,7 @@ export function BookingModal() {
     showToast("✅ Consulta agendada com sucesso!")
   }
 
-  const totalNum = parseFloat(
-    booking.price.replace("R$ ", "").replace(",00", "").replace(/\./g, "").replace(",", ".")
-  ) || 150
+  const totalNum = parseBRLPrice(booking.price)
 
   return (
     <AnimatePresence>
@@ -344,7 +361,18 @@ export function BookingModal() {
 
                 <div className="flex gap-3">
                   <button onClick={() => setStep(2)} className="flex-1 border border-[#d9e3dd] hover:border-[#1D9E75] text-[#0e1a14] rounded-xl py-3 text-[14px] font-medium transition-colors cursor-pointer">← Voltar</button>
-                  <button onClick={handleConfirm} className="flex-[2] bg-[#1D9E75] hover:bg-[#0F6E56] text-white rounded-xl py-3 text-[14px] font-medium transition-colors cursor-pointer">Agendar ✓</button>
+                  <button
+                    onClick={handleConfirm}
+                    disabled={isSubmitting}
+                    className="flex-[2] bg-[#1D9E75] hover:bg-[#0F6E56] disabled:opacity-60 disabled:cursor-not-allowed text-white rounded-xl py-3 text-[14px] font-medium transition-colors cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                        Agendando...
+                      </>
+                    ) : "Agendar ✓"}
+                  </button>
                 </div>
               </div>
             )}

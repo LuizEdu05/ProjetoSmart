@@ -32,9 +32,18 @@ const CLINICS = [
   { name: "OdontoSorriso",        spec: "Odontologia",    rating: "4.7", available: true,  bg: "#FAEEDA", color: "#633806" },
 ]
 
+function getNextWeekday(): string {
+  const WD = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"]
+  const MO = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"]
+  const d = new Date()
+  d.setDate(d.getDate() + 3)
+  return `${WD[d.getDay()]}, ${d.getDate()} ${MO[d.getMonth()]}`
+}
+
 export function EcgMonitor() {
   const [bpmIdx, setBpmIdx] = useState(0)
   const bpm = BPM_SEQ[bpmIdx] ?? 72
+  const nextApptDate = getNextWeekday()
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -109,10 +118,7 @@ export function EcgMonitor() {
             aria-hidden="true"
           >
             {/* Shadow glow pass */}
-            <motion.g
-              animate={{ x: [0, -80] }}
-              transition={{ duration: 1.15, repeat: Infinity, ease: "linear" }}
-            >
+            <g className="animate-ecg-scroll">
               {ECG_PATHS.map((d, i) => (
                 <path
                   key={`glow-${i}`}
@@ -124,12 +130,9 @@ export function EcgMonitor() {
                   strokeLinecap="round"
                 />
               ))}
-            </motion.g>
+            </g>
             {/* Main line */}
-            <motion.g
-              animate={{ x: [0, -80] }}
-              transition={{ duration: 1.15, repeat: Infinity, ease: "linear" }}
-            >
+            <g className="animate-ecg-scroll">
               {ECG_PATHS.map((d, i) => (
                 <path
                   key={`line-${i}`}
@@ -141,7 +144,7 @@ export function EcgMonitor() {
                   strokeLinejoin="round"
                 />
               ))}
-            </motion.g>
+            </g>
           </svg>
         </div>
       </div>
@@ -233,7 +236,7 @@ export function EcgMonitor() {
           <CalendarCheck size={13} className="text-[#1D9E75]" />
         </div>
         <div>
-          <p className="text-[12px] font-semibold text-[#0e1a14]">Dra. Ana Ribeiro · Sex, 14 Mar</p>
+          <p className="text-[12px] font-semibold text-[#0e1a14]">Dra. Ana Ribeiro · {nextApptDate}</p>
           <p className="text-[11px] text-[#6b7c72]">Consulta confirmada · 14:30</p>
         </div>
         <span className="ml-auto text-[10px] font-semibold bg-[#E1F5EE] text-[#0F6E56] px-2 py-0.5 rounded-md">

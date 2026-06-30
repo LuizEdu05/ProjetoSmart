@@ -3,39 +3,33 @@
 import { useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import Link from "next/link"
-import { motion } from "framer-motion"
 import {
   LayoutDashboard,
   Calendar,
   Users,
-  Clock,
-  BarChart2,
-  Settings,
   LogOut,
-  Building2,
+  Stethoscope,
   MessageSquare,
+  Settings,
 } from "lucide-react"
-import { ClinicAuthProvider, useClinicAuth } from "@/context/clinic-auth-context"
+import { DoctorAuthProvider, useDoctorAuth } from "@/context/doctor-auth-context"
 
 const NAV = [
-  { href: "/clinic/dashboard",     label: "Dashboard",      Icon: LayoutDashboard },
-  { href: "/clinic/appointments",  label: "Agendamentos",   Icon: Calendar },
-  { href: "/clinic/professionals", label: "Profissionais",  Icon: Users },
-  { href: "/clinic/schedule",      label: "Agenda",         Icon: Clock },
-  { href: "/clinic/analytics",     label: "Relatórios",     Icon: BarChart2 },
-  { href: "/clinic/settings",      label: "Configurações",  Icon: Settings },
+  { href: "/doctor/dashboard", label: "Dashboard",  Icon: LayoutDashboard },
+  { href: "/doctor/agenda",    label: "Minha Agenda", Icon: Calendar },
+  { href: "/doctor/patients",  label: "Pacientes",   Icon: Users },
 ]
 
-function ClinicShell({ children }: { children: React.ReactNode }) {
-  const { clinic, isLoading, logout } = useClinicAuth()
-  const router = useRouter()
+function DoctorShell({ children }: { children: React.ReactNode }) {
+  const { doctor, isLoading, logout } = useDoctorAuth()
+  const router   = useRouter()
   const pathname = usePathname()
 
   useEffect(() => {
-    if (!isLoading && !clinic && pathname !== "/clinic/login") {
-      router.replace("/clinic/login")
+    if (!isLoading && !doctor && pathname !== "/doctor/login") {
+      router.replace("/doctor/login")
     }
-  }, [clinic, isLoading, pathname, router])
+  }, [doctor, isLoading, pathname, router])
 
   if (isLoading) {
     return (
@@ -45,53 +39,54 @@ function ClinicShell({ children }: { children: React.ReactNode }) {
     )
   }
 
-  if (!clinic) return <>{children}</>
+  if (!doctor) return <>{children}</>
 
   return (
-    <div className="min-h-screen flex bg-[#f8faf9]">
+    <div className="min-h-screen flex bg-[#f0f4f7]">
       {/* Sidebar */}
       <aside className="w-60 bg-[#0e1a14] flex flex-col fixed inset-y-0 left-0 z-50">
         {/* Logo */}
         <div className="px-5 py-5 border-b border-white/8">
-          <Link href="/clinic/dashboard" className="flex items-center gap-2 cursor-pointer">
-            <span className="w-7 h-7 bg-[#1D9E75] rounded-lg flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-              +
+          <Link href="/doctor/dashboard" className="flex items-center gap-2 cursor-pointer">
+            <span className="w-7 h-7 bg-[#378ADD] rounded-lg flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+              <Stethoscope size={14} />
             </span>
             <span className="font-bold text-[15px] leading-none">
               <span className="text-[#FFB800]">SMART</span>
-              <span className="text-white"> Clínica</span>
+              <span className="text-white"> Médico</span>
             </span>
           </Link>
         </div>
 
-        {/* Clinic info */}
+        {/* Doctor info */}
         <div className="px-4 py-3.5 border-b border-white/8">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#1D9E75]/20 border border-[#1D9E75]/40 flex items-center justify-center flex-shrink-0">
-              <Building2 size={15} className="text-[#1D9E75]" />
+            <div
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-[13px] font-bold flex-shrink-0"
+              style={{ background: doctor.avatarBg, color: doctor.color }}
+            >
+              {doctor.initials}
             </div>
             <div className="min-w-0">
               <p className="text-[13px] font-medium text-white truncate leading-tight">
-                {clinic.clinicName}
+                {doctor.name.replace(/^Dr[a]?\. /, "")}
               </p>
-              <p className="text-[11px] text-[#8fa398] truncate">
-                {clinic.specialty}
-              </p>
+              <p className="text-[11px] text-[#8fa398] truncate">{doctor.specialty}</p>
             </div>
           </div>
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 px-3 py-4 flex flex-col gap-0.5 overflow-y-auto" aria-label="Navegação da clínica">
+        <nav className="flex-1 px-3 py-4 flex flex-col gap-0.5 overflow-y-auto" aria-label="Navegação do médico">
           {NAV.map(({ href, label, Icon }) => {
-            const active = pathname === href
+            const active = pathname === href || pathname.startsWith(href + "/")
             return (
               <Link
                 key={href}
                 href={href}
                 className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-150 cursor-pointer ${
                   active
-                    ? "bg-[#1D9E75] text-white"
+                    ? "bg-[#378ADD] text-white"
                     : "text-[#8fa398] hover:bg-white/6 hover:text-white"
                 }`}
                 aria-current={active ? "page" : undefined}
@@ -112,6 +107,13 @@ function ClinicShell({ children }: { children: React.ReactNode }) {
             <MessageSquare size={16} />
             Ver site paciente
           </Link>
+          <Link
+            href="/clinic/dashboard"
+            className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[13px] font-medium text-[#8fa398] hover:text-white hover:bg-white/6 transition-all cursor-pointer"
+          >
+            <Settings size={16} />
+            Painel da clínica
+          </Link>
           <button
             onClick={logout}
             className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[13px] font-medium text-[#8fa398] hover:text-white hover:bg-white/6 transition-all cursor-pointer"
@@ -122,25 +124,18 @@ function ClinicShell({ children }: { children: React.ReactNode }) {
         </div>
       </aside>
 
-      {/* Main content */}
+      {/* Main */}
       <main className="flex-1 ml-60 min-h-screen">
-        <motion.div
-          key={pathname}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25, ease: "easeOut" as const }}
-        >
-          {children}
-        </motion.div>
+        {children}
       </main>
     </div>
   )
 }
 
-export default function ClinicLayout({ children }: { children: React.ReactNode }) {
+export default function DoctorLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ClinicAuthProvider>
-      <ClinicShell>{children}</ClinicShell>
-    </ClinicAuthProvider>
+    <DoctorAuthProvider>
+      <DoctorShell>{children}</DoctorShell>
+    </DoctorAuthProvider>
   )
 }

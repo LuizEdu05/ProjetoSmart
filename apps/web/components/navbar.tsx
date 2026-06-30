@@ -4,13 +4,12 @@ import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Menu, X, LogOut, User as UserIcon } from "lucide-react"
+import { Menu, X, LogOut, Search, Sun, Moon } from "lucide-react"
 import { Button } from "@workspace/ui/components/button"
 import { useAuth } from "@/context/auth-context"
+import { useTheme } from "next-themes"
 
 interface NavbarProps {
-  onLoginClick: () => void
-  onRegisterClick: () => void
   onProfileClick: () => void
   currentPage: string
 }
@@ -28,13 +27,12 @@ const EXTRA_LINKS = [
 ]
 
 export function Navbar({
-  onLoginClick,
-  onRegisterClick,
   onProfileClick,
   currentPage,
 }: NavbarProps) {
   const { user, logout } = useAuth()
   const router = useRouter()
+  const { resolvedTheme, setTheme } = useTheme()
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -64,8 +62,8 @@ export function Navbar({
         role="banner"
         className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${
           scrolled
-            ? "glass border-b border-[#d9e3dd] shadow-sm"
-            : "bg-white/95 backdrop-blur-sm"
+            ? "glass border-b border-[#d9e3dd] shadow-sm dark:bg-[#060d09]/95 dark:border-[rgba(29,158,117,0.15)]"
+            : "bg-white/95 backdrop-blur-sm dark:bg-[#060d09]/95"
         }`}
       >
         <div className="max-w-[1200px] mx-auto px-5 md:px-10 flex items-center justify-between h-[66px]">
@@ -112,7 +110,21 @@ export function Navbar({
                 {link.label}
               </Link>
             ))}
+            <Link href="/buscar"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#E1F5EE] text-[#0F6E56] text-[13px] font-semibold hover:bg-[#1D9E75] hover:text-white transition-colors duration-200 cursor-pointer">
+              <Search size={13} />
+              Buscar
+            </Link>
           </div>
+
+          {/* Theme toggle */}
+          <button
+            onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+            aria-label="Alternar tema"
+            className="hidden md:flex items-center justify-center w-9 h-9 rounded-xl border border-[#d9e3dd] dark:border-[rgba(29,158,117,0.2)] text-[#6b7c72] dark:text-white/60 hover:border-[#1D9E75] hover:text-[#1D9E75] dark:hover:text-[#1D9E75] transition-all duration-200 cursor-pointer"
+          >
+            {resolvedTheme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
 
           {/* Desktop auth */}
           <div className="hidden md:flex items-center gap-3">
@@ -149,14 +161,14 @@ export function Navbar({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={onLoginClick}
+                  onClick={() => router.push("/login")}
                   className="cursor-pointer border-[#d9e3dd] text-[#0e1a14] hover:border-[#1D9E75] hover:text-[#1D9E75]"
                 >
                   Entrar
                 </Button>
                 <Button
                   size="sm"
-                  onClick={onRegisterClick}
+                  onClick={() => router.push("/register")}
                   className="cursor-pointer bg-[#1D9E75] hover:bg-[#0F6E56] text-white border-transparent"
                 >
                   Criar conta
@@ -185,9 +197,16 @@ export function Navbar({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.18 }}
-            className="fixed top-[66px] left-0 right-0 z-[99] bg-white border-b border-[#d9e3dd] shadow-lg md:hidden"
+            className="fixed top-[66px] left-0 right-0 z-[99] bg-white dark:bg-[#060d09] border-b border-[#d9e3dd] dark:border-[rgba(29,158,117,0.15)] shadow-lg md:hidden"
           >
             <nav className="flex flex-col p-4 gap-1" aria-label="Menu mobile">
+              <button
+                onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+                className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-[14px] font-medium text-[#6b7c72] dark:text-white/60 hover:text-[#1D9E75] hover:bg-[#f2f5f3] dark:hover:bg-[rgba(29,158,117,0.08)] transition-colors cursor-pointer mb-1"
+              >
+                {resolvedTheme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
+                {resolvedTheme === "dark" ? "Modo claro" : "Modo escuro"}
+              </button>
               {NAV_LINKS.map((link) => (
                 <a
                   key={link.href}
@@ -202,6 +221,11 @@ export function Navbar({
                 </a>
               ))}
               <div className="border-t border-[#d9e3dd] mt-1 pt-2">
+                <Link href="/buscar" onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-[14px] font-semibold text-[#0F6E56] bg-[#E1F5EE] hover:bg-[#1D9E75] hover:text-white transition-colors cursor-pointer mb-1">
+                  <Search size={14} />
+                  Buscar Clínicas
+                </Link>
                 {EXTRA_LINKS.map(link => (
                   <Link key={link.href} href={link.href} onClick={() => setMobileOpen(false)}
                     className="block px-3 py-2.5 rounded-lg text-[14px] font-medium text-[#6b7c72] hover:text-[#1D9E75] hover:bg-[#f2f5f3] transition-colors cursor-pointer">
@@ -247,19 +271,13 @@ export function Navbar({
                 ) : (
                   <>
                     <button
-                      onClick={() => {
-                        setMobileOpen(false)
-                        onLoginClick()
-                      }}
+                      onClick={() => { setMobileOpen(false); router.push("/login") }}
                       className="w-full text-center px-4 py-2.5 rounded-xl border border-[#d9e3dd] text-sm font-medium text-[#0e1a14] hover:border-[#1D9E75] hover:text-[#1D9E75] transition-colors cursor-pointer"
                     >
                       Entrar
                     </button>
                     <button
-                      onClick={() => {
-                        setMobileOpen(false)
-                        onRegisterClick()
-                      }}
+                      onClick={() => { setMobileOpen(false); router.push("/register") }}
                       className="w-full text-center px-4 py-2.5 rounded-xl bg-[#1D9E75] hover:bg-[#0F6E56] text-white text-sm font-medium transition-colors cursor-pointer"
                     >
                       Criar conta

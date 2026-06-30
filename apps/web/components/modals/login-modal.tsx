@@ -145,6 +145,7 @@ export function LoginModal({
               <div className="text-right mb-5">
                 <button
                   type="button"
+                  onClick={() => showToast("Recuperação de senha por e-mail em breve.", "info")}
                   className="text-[12px] text-[#1D9E75] hover:underline cursor-pointer"
                 >
                   Esqueci minha senha
@@ -166,7 +167,10 @@ export function LoginModal({
               <div className="flex-1 h-px bg-[#d9e3dd]" />
             </div>
 
-            <button className="w-full bg-white border-[1.5px] border-[#d9e3dd] hover:border-[#1D9E75] text-[#0e1a14] rounded-xl py-2.5 text-[14px] font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer mb-4">
+            <button
+              onClick={() => showToast("Login com Google em breve.", "info")}
+              className="w-full bg-white border-[1.5px] border-[#d9e3dd] hover:border-[#1D9E75] text-[#0e1a14] rounded-xl py-2.5 text-[14px] font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer mb-4"
+            >
               <svg viewBox="0 0 24 24" className="w-4 h-4" aria-hidden="true">
                 <path
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"

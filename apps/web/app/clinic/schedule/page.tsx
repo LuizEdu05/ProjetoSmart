@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { useClinicAuth } from "@/context/clinic-auth-context"
 import { getProfessionals, updateProfessional, type Professional, type DaySlot } from "@/lib/clinic-store"
+import { FilterDropdown } from "@/components/ui/filter-dropdown"
 
 const DAYS: { key: keyof Professional["schedule"]; label: string }[] = [
   { key: "seg", label: "Segunda" },
@@ -34,11 +35,14 @@ function DayEditor({ slot, onChange }: { slot: DaySlot; onChange: (s: DaySlot) =
       </div>
       <div className="flex items-center gap-1.5">
         <span className="text-[12px] text-[#6b7c72]">Intervalo:</span>
-        <select value={slot.interval} disabled={!slot.active}
-          onChange={e => onChange({ ...slot, interval: Number(e.target.value) })}
-          className={inp + " w-auto cursor-pointer"}>
-          {INTERVALS.map(i => <option key={i} value={i}>{i} min</option>)}
-        </select>
+        <FilterDropdown
+          value={slot.interval}
+          onChange={(interval) => onChange({ ...slot, interval })}
+          options={INTERVALS}
+          getLabel={(i) => `${i} min`}
+          disabled={!slot.active}
+          className="w-[110px]"
+        />
       </div>
     </div>
   )

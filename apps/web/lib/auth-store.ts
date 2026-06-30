@@ -108,7 +108,7 @@ export function registerLocal(
   const users = getUsers()
   if (users.some((u) => u.email.toLowerCase() === email.toLowerCase()))
     throw new Error("Este e-mail já está cadastrado.")
-  const user = normalize({ id: "u" + Date.now(), firstName, lastName, email, phone, password })
+  const user = normalize({ id: crypto.randomUUID(), firstName, lastName, email, phone, password })
   users.push(user)
   saveUsers(users)
   return user
@@ -125,6 +125,17 @@ export function persistUser(user: User) {
 
 export function addAppointment(user: User, appt: Appointment): User {
   const updated = { ...user, appointments: [appt, ...user.appointments] }
+  persistUser(updated)
+  return updated
+}
+
+export function rescheduleAppointment(user: User, apptId: string, date: string, time: string): User {
+  const updated = {
+    ...user,
+    appointments: user.appointments.map(a =>
+      a.id === apptId ? { ...a, date, time, status: "upcoming" as const } : a
+    ),
+  }
   persistUser(updated)
   return updated
 }
