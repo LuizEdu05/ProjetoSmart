@@ -32,80 +32,82 @@ export type ProfFull = Professional & ProfessionalExtended
 // ── Storage keys ──────────────────────────────────────────────────────────────
 const PUBLIC_CLINICS_KEY = "sc_public_clinics"
 const PROF_EXTENDED_KEY  = "sc_prof_extended"
+const DATA_VERSION_KEY   = "sc_data_version"
+const DATA_VERSION       = "v3" // bump when DEMO_CLINICS or DEMO_PROFESSIONALS change
 
 // ── Demo clinic data ──────────────────────────────────────────────────────────
 const DEMO_CLINICS: ClinicPublicProfile[] = [
   {
     clinicId: "c1",
     clinicName: "Clínica Saúde & Vida",
-    city: "Joinville",
+    city: "Jaraguá do Sul",
     state: "SC",
     rating: 4.8,
     reviewCount: 312,
     specialties: ["Clínica Geral", "Cardiologia", "Ortopedia", "Dermatologia"],
     gradient: ["#1D9E75", "#0F6E56"],
     emoji: "🏥",
-    description: "Centro médico completo com especialistas renomados e atendimento humanizado. Mais de 15 anos cuidando da saúde de Joinville.",
+    description: "Centro médico completo com especialistas renomados e atendimento humanizado. Mais de 15 anos cuidando da saúde de Jaraguá do Sul.",
   },
   {
     clinicId: "c2",
-    clinicName: "CardioCenter São Paulo",
-    city: "São Paulo",
-    state: "SP",
+    clinicName: "CardioCenter Jaraguá do Sul",
+    city: "Jaraguá do Sul",
+    state: "SC",
     rating: 4.9,
     reviewCount: 547,
     specialties: ["Cardiologia", "Medicina Interna", "Clínica Geral"],
     gradient: ["#E24B4A", "#993556"],
     emoji: "❤️",
-    description: "Especialistas em saúde cardiovascular com equipamentos de última geração. Referência em cardiologia no estado de São Paulo.",
+    description: "Especialistas em saúde cardiovascular com equipamentos de última geração. Referência em cardiologia no norte de Santa Catarina.",
   },
   {
     clinicId: "c3",
     clinicName: "Clínica Infantil Crescer",
-    city: "Curitiba",
-    state: "PR",
+    city: "Guaramirim",
+    state: "SC",
     rating: 4.7,
     reviewCount: 228,
     specialties: ["Pediatria", "Neonatologia", "Clínica Geral"],
     gradient: ["#EF9F27", "#e67e22"],
     emoji: "👶",
-    description: "Cuidado especial para os pequenos com médicos pediatras experientes. Ambiente acolhedor e pensado para o conforto das crianças e famílias.",
+    description: "Cuidado especial para os pequenos com médicos pediatras experientes. Ambiente acolhedor e pensado para o conforto das crianças e famílias de Guaramirim.",
   },
   {
     clinicId: "c4",
-    clinicName: "OdontoMais Florianópolis",
-    city: "Florianópolis",
+    clinicName: "OdontoMais Guaramirim",
+    city: "Guaramirim",
     state: "SC",
     rating: 4.6,
     reviewCount: 183,
     specialties: ["Odontologia", "Ortodontia"],
     gradient: ["#378ADD", "#185FA5"],
     emoji: "🦷",
-    description: "Clínica odontológica completa oferecendo desde tratamentos preventivos até implantes. Tecnologia digital e atendimento personalizado.",
+    description: "Clínica odontológica completa oferecendo desde tratamentos preventivos até implantes. Tecnologia digital e atendimento personalizado em Guaramirim.",
   },
   {
     clinicId: "c5",
     clinicName: "Espaço NutriMente",
-    city: "Blumenau",
+    city: "Schroeder",
     state: "SC",
     rating: 4.5,
     reviewCount: 97,
     specialties: ["Nutrição", "Psicologia"],
     gradient: ["#7F77DD", "#4C3B8C"],
     emoji: "🌿",
-    description: "Clínica integrada de saúde mental e nutrição. Abordagem multidisciplinar para o bem-estar completo do paciente.",
+    description: "Clínica integrada de saúde mental e nutrição. Abordagem multidisciplinar para o bem-estar completo do paciente em Schroeder.",
   },
   {
     clinicId: "c6",
-    clinicName: "FisioMovimento Chapecó",
-    city: "Chapecó",
+    clinicName: "FisioMovimento Schroeder",
+    city: "Schroeder",
     state: "SC",
     rating: 4.7,
     reviewCount: 142,
     specialties: ["Fisioterapia", "Ortopedia"],
     gradient: ["#0F6E56", "#1D9E75"],
     emoji: "🏃",
-    description: "Centro de fisioterapia e reabilitação com fisioterapeutas especializados em ortopedia, neurologia e esportiva.",
+    description: "Centro de fisioterapia e reabilitação com fisioterapeutas especializados em ortopedia, neurologia e esportiva em Schroeder.",
   },
 ]
 
@@ -146,27 +148,34 @@ const BASE_SCHEDULE = {
 } satisfies WeekSchedule
 
 const DEMO_PROFESSIONALS: Professional[] = [
-  // c2 – CardioCenter
-  { id:"c2dr1", clinicId:"c2", name:"Dr. Roberto Almeida",  specialty:"Cardiologia",       crm:"CRM/SP 98765", email:"roberto@cardiocenter.com", phone:"(11) 99100-1111", initials:"RA", color:"#791F1F", avatarBg:"#FCEBEB", active:true, schedule: BASE_SCHEDULE },
-  { id:"c2dr2", clinicId:"c2", name:"Dra. Patrícia Lemos",  specialty:"Medicina Interna",  crm:"CRM/SP 87654", email:"patricia@cardiocenter.com", phone:"(11) 99100-2222", initials:"PL", color:"#993556", avatarBg:"#FBEAF0", active:true, schedule: BASE_SCHEDULE },
-  { id:"c2dr3", clinicId:"c2", name:"Dr. André Souza",      specialty:"Clínica Geral",     crm:"CRM/SP 76543", email:"andre@cardiocenter.com",    phone:"(11) 99100-3333", initials:"AS", color:"#0F6E56", avatarBg:"#E1F5EE", active:true, schedule: BASE_SCHEDULE },
-  // c3 – Infantil Crescer
-  { id:"c3dr1", clinicId:"c3", name:"Dra. Marina Costa",    specialty:"Pediatria",         crm:"CRM/PR 55443", email:"marina@crescer.com",        phone:"(41) 99200-1111", initials:"MC", color:"#633806", avatarBg:"#FAEEDA", active:true, schedule: BASE_SCHEDULE },
-  { id:"c3dr2", clinicId:"c3", name:"Dr. Paulo Henrique",   specialty:"Neonatologia",      crm:"CRM/PR 44332", email:"paulo@crescer.com",         phone:"(41) 99200-2222", initials:"PH", color:"#185FA5", avatarBg:"#E6F1FB", active:true, schedule: { ...BASE_SCHEDULE, seg: { active: true, start: "09:00", end: "16:00", interval: 45 } } },
-  // c4 – OdontoMais
-  { id:"c4dr1", clinicId:"c4", name:"Dr. Gustavo Ferreira", specialty:"Odontologia",       crm:"CRO/SC 11223", email:"gustavo@odontomais.com",    phone:"(48) 99300-1111", initials:"GF", color:"#185FA5", avatarBg:"#E6F1FB", active:true, schedule: BASE_SCHEDULE },
-  { id:"c4dr2", clinicId:"c4", name:"Dra. Letícia Rocha",   specialty:"Ortodontia",        crm:"CRO/SC 22334", email:"leticia@odontomais.com",    phone:"(48) 99300-2222", initials:"LR", color:"#4C3B8C", avatarBg:"#EEEAFA", active:true, schedule: { ...BASE_SCHEDULE, sab: { active: true, start: "08:00", end: "12:00", interval: 60 } } },
-  // c5 – Espaço NutriMente
+  // c2 – CardioCenter Jaraguá do Sul
+  { id:"c2dr1", clinicId:"c2", name:"Dr. Roberto Almeida",  specialty:"Cardiologia",       crm:"CRM/SC 98765", email:"roberto@cardiocenter.com", phone:"(47) 99100-1111", initials:"RA", color:"#791F1F", avatarBg:"#FCEBEB", active:true, schedule: BASE_SCHEDULE },
+  { id:"c2dr2", clinicId:"c2", name:"Dra. Patrícia Lemos",  specialty:"Medicina Interna",  crm:"CRM/SC 87654", email:"patricia@cardiocenter.com", phone:"(47) 99100-2222", initials:"PL", color:"#993556", avatarBg:"#FBEAF0", active:true, schedule: BASE_SCHEDULE },
+  { id:"c2dr3", clinicId:"c2", name:"Dr. André Souza",      specialty:"Clínica Geral",     crm:"CRM/SC 76543", email:"andre@cardiocenter.com",    phone:"(47) 99100-3333", initials:"AS", color:"#0F6E56", avatarBg:"#E1F5EE", active:true, schedule: BASE_SCHEDULE },
+  // c3 – Infantil Crescer Guaramirim
+  { id:"c3dr1", clinicId:"c3", name:"Dra. Marina Costa",    specialty:"Pediatria",         crm:"CRM/SC 55443", email:"marina@crescer.com",        phone:"(47) 99200-1111", initials:"MC", color:"#633806", avatarBg:"#FAEEDA", active:true, schedule: BASE_SCHEDULE },
+  { id:"c3dr2", clinicId:"c3", name:"Dr. Paulo Henrique",   specialty:"Neonatologia",      crm:"CRM/SC 44332", email:"paulo@crescer.com",         phone:"(47) 99200-2222", initials:"PH", color:"#185FA5", avatarBg:"#E6F1FB", active:true, schedule: { ...BASE_SCHEDULE, seg: { active: true, start: "09:00", end: "16:00", interval: 45 } } },
+  // c4 – OdontoMais Guaramirim
+  { id:"c4dr1", clinicId:"c4", name:"Dr. Gustavo Ferreira", specialty:"Odontologia",       crm:"CRO/SC 11223", email:"gustavo@odontomais.com",    phone:"(47) 99300-1111", initials:"GF", color:"#185FA5", avatarBg:"#E6F1FB", active:true, schedule: BASE_SCHEDULE },
+  { id:"c4dr2", clinicId:"c4", name:"Dra. Letícia Rocha",   specialty:"Ortodontia",        crm:"CRO/SC 22334", email:"leticia@odontomais.com",    phone:"(47) 99300-2222", initials:"LR", color:"#4C3B8C", avatarBg:"#EEEAFA", active:true, schedule: { ...BASE_SCHEDULE, sab: { active: true, start: "08:00", end: "12:00", interval: 60 } } },
+  // c5 – Espaço NutriMente Schroeder
   { id:"c5dr1", clinicId:"c5", name:"Dra. Beatriz Santos",  specialty:"Nutrição",          crm:"CRN/SC 33445", email:"beatriz@nutrimente.com",    phone:"(47) 99400-1111", initials:"BS", color:"#7F77DD", avatarBg:"#EEEAFA", active:true, schedule: BASE_SCHEDULE },
   { id:"c5dr2", clinicId:"c5", name:"Dr. Thiago Marques",   specialty:"Psicologia",        crm:"CRP/SC 44556", email:"thiago@nutrimente.com",     phone:"(47) 99400-2222", initials:"TM", color:"#4C3B8C", avatarBg:"#EEEAFA", active:true, schedule: { ...BASE_SCHEDULE, qua: { active: false, start: "08:00", end: "17:00", interval: 50 } } },
-  // c6 – FisioMovimento
-  { id:"c6dr1", clinicId:"c6", name:"Dra. Juliana Pereira", specialty:"Fisioterapia",      crm:"CREFITO/SC 55667", email:"juliana@fisiomov.com", phone:"(49) 99500-1111", initials:"JP", color:"#0F6E56", avatarBg:"#E1F5EE", active:true, schedule: BASE_SCHEDULE },
-  { id:"c6dr2", clinicId:"c6", name:"Dr. Renato Oliveira",  specialty:"Fisioterapia",      crm:"CREFITO/SC 66778", email:"renato@fisiomov.com",  phone:"(49) 99500-2222", initials:"RO", color:"#185FA5", avatarBg:"#E6F1FB", active:true, schedule: { ...BASE_SCHEDULE, ter: { active: true, start: "10:00", end: "18:00", interval: 40 } } },
+  // c6 – FisioMovimento Schroeder
+  { id:"c6dr1", clinicId:"c6", name:"Dra. Juliana Pereira", specialty:"Fisioterapia",      crm:"CREFITO/SC 55667", email:"juliana@fisiomov.com", phone:"(47) 99500-1111", initials:"JP", color:"#0F6E56", avatarBg:"#E1F5EE", active:true, schedule: BASE_SCHEDULE },
+  { id:"c6dr2", clinicId:"c6", name:"Dr. Renato Oliveira",  specialty:"Fisioterapia",      crm:"CREFITO/SC 66778", email:"renato@fisiomov.com",  phone:"(47) 99500-2222", initials:"RO", color:"#185FA5", avatarBg:"#E6F1FB", active:true, schedule: { ...BASE_SCHEDULE, ter: { active: true, start: "10:00", end: "18:00", interval: 40 } } },
 ]
 
 // ── Seed all public data ──────────────────────────────────────────────────────
 export function seedAllPublicData() {
   if (typeof window === "undefined") return
+
+  const stale = localStorage.getItem(DATA_VERSION_KEY) !== DATA_VERSION
+  if (stale) {
+    localStorage.removeItem(PUBLIC_CLINICS_KEY)
+    localStorage.removeItem(PROF_EXTENDED_KEY)
+    localStorage.setItem(DATA_VERSION_KEY, DATA_VERSION)
+  }
 
   if (!localStorage.getItem(PUBLIC_CLINICS_KEY)) {
     localStorage.setItem(PUBLIC_CLINICS_KEY, JSON.stringify(DEMO_CLINICS))

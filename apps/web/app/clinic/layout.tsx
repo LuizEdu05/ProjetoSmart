@@ -3,6 +3,7 @@
 import { useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import Link from "next/link"
+import { motion } from "framer-motion"
 import {
   LayoutDashboard,
   Calendar,
@@ -123,7 +124,14 @@ function ClinicShell({ children }: { children: React.ReactNode }) {
 
       {/* Main content */}
       <main className="flex-1 ml-60 min-h-screen">
-        {children}
+        <motion.div
+          key={pathname}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, ease: "easeOut" as const }}
+        >
+          {children}
+        </motion.div>
       </main>
     </div>
   )

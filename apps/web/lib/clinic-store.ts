@@ -57,7 +57,7 @@ export function seedClinicAdmins() {
   if (typeof window === "undefined") return
   if (localStorage.getItem(CLINIC_ADMINS_KEY)) return
   const demos: ClinicAdmin[] = [
-    { id:"clinic1", clinicId:"c1", clinicName:"Clínica Saúde & Vida", email:"clinica@smartconsulta.com", password:"admin123", ownerName:"Dr. Felipe Moura", phone:"(47) 3322-1111", address:"Rua das Flores, 123 — Joinville, SC", specialty:"Clínica Geral" },
+    { id:"clinic1", clinicId:"c1", clinicName:"Clínica Saúde & Vida", email:"clinica@smartconsulta.com", password:"admin123", ownerName:"Dr. Felipe Moura", phone:"(47) 3322-1111", address:"Av. Getúlio Vargas, 455 — Centro, Jaraguá do Sul, SC", specialty:"Clínica Geral" },
   ]
   localStorage.setItem(CLINIC_ADMINS_KEY, JSON.stringify(demos))
 }
